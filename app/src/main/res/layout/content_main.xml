@@ -12,7 +12,6 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:id="@+id/tView"
-        android:text="01718920402"
         android:gravity="center_horizontal"
         />
 
@@ -29,15 +28,20 @@
             <Button
                 android:text="1"
                 android:id="@+id/button1"
-                />
+                android:textColor="#6C6C6C"
+                android:onClick="onClick"/>
 
             <Button
                 android:id="@+id/button2"
-                android:text="2" />
+                android:text="2"
+                android:textColor="#6C6C6C"
+                android:onClick="onClick"/>
 
             <Button
                 android:id="@+id/button3"
-                android:text="3" />
+                android:text="3"
+                android:textColor="#6C6C6C"
+                android:onClick="onClick"/>
         </TableRow>
 
         <TableRow>
@@ -53,15 +57,20 @@
             <Button
                 android:text="4"
                 android:id="@+id/button4"
-                />
+                android:textColor="#6C6C6C"
+                android:onClick="onClick"/>
 
             <Button
                 android:id="@+id/button5"
-                android:text="5" />
+                android:text="5"
+                android:textColor="#6C6C6C"
+                android:onClick="onClick"/>
 
             <Button
                 android:id="@+id/button6"
-                android:text="6" />
+                android:text="6"
+                android:textColor="#6C6C6C"
+                android:onClick="onClick"/>
         </TableRow>
 
         <TableRow
@@ -72,15 +81,20 @@
         <Button
             android:text="7"
             android:id="@+id/button7"
-            />
+            android:textColor="#6C6C6C"
+            android:onClick="onClick"/>
 
         <Button
             android:id="@+id/button8"
-            android:text="8" />
+            android:text="8"
+            android:textColor="#6C6C6C"
+            android:onClick="onClick"/>
 
         <Button
             android:id="@+id/button9"
-            android:text="9" />
+            android:text="9"
+            android:textColor="#6C6C6C"
+            android:onClick="onClick"/>
         </TableRow>
 
         <TableRow
@@ -90,16 +104,21 @@
 
             <Button
                 android:id="@+id/buttonOK"
-                android:text="OK" />
+                android:text="OK"
+                android:textColor="#00CC00"
+                android:onClick="onClick"/>
 
             <Button
                 android:text="0"
                 android:id="@+id/button0"
-                />
+                android:textColor="#6C6C6C"
+                android:onClick="onClick"/>
 
             <Button
                 android:id="@+id/buttonBackspace"
-                android:text="&lt;-" />
+                android:text="&lt;-"
+                android:textColor="#6C6C6C"
+                android:onClick="onClick"/>
         </TableRow>
 
     </TableLayout>

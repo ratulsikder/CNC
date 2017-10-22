@@ -1,5 +1,6 @@
 package com.collectcn.cnc;
 
+import android.content.Context;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -12,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -43,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
         Button btnB = (Button)findViewById(R.id.buttonBackspace);
 
         tView.setPadding(0,(int)(height/3.5),0,0);
-        tView.setTextSize(height/50);
+        tView.setTextSize(width/25);
         btn1.setWidth(width/30);
         btn2.setWidth(width/30);
         btn3.setWidth(width/3);
@@ -69,6 +71,19 @@ public class MainActivity extends AppCompatActivity {
         btn0.setHeight(height/9);
         btnOK.setHeight(height/9);
         btnB.setHeight(height/9);
+
+        btn1.setTextSize(width/30);
+        btn2.setTextSize(width/30);
+        btn3.setTextSize(width/30);
+        btn4.setTextSize(width/30);
+        btn5.setTextSize(width/30);
+        btn6.setTextSize(width/30);
+        btn7.setTextSize(width/30);
+        btn8.setTextSize(width/30);
+        btn9.setTextSize(width/30);
+        btn0.setTextSize(width/30);
+        btnOK.setTextSize(width/30);
+        btnB.setTextSize(width/30);
     }
 
     @Override
@@ -91,5 +106,68 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void onClick(View v) {
+        final int id = v.getId();
+        TextView tView = (TextView)findViewById(R.id.tView);
+        String text = tView.getText().toString();
+        Context context = getApplicationContext();
+
+        //CharSequence text = "Hello toast!";
+        //int duration = Toast.LENGTH_SHORT;
+
+        switch (id) {
+            case R.id.button1:
+                // your code for button1 here
+                tView.setText(text+"1");
+                break;
+            case R.id.button2:
+                // your code for button2 here
+                tView.setText(text+"2");
+                break;
+            case R.id.button3:
+                // your code for button2 here
+                tView.setText(text+"3");
+                break;
+            case R.id.button4:
+                // your code for button2 here
+                tView.setText(text+"4");
+                break;
+            case R.id.button5:
+                // your code for button2 here
+                tView.setText(text+"5");
+                break;
+            case R.id.button6:
+                // your code for button2 here
+                tView.setText(text+"6");
+                break;
+            case R.id.button7:
+                // your code for button2 here
+                tView.setText(text+"7");
+                break;
+            case R.id.button8:
+                // your code for button2 here
+                tView.setText(text+"8");
+                break;
+            case R.id.button9:
+                // your code for button2 here
+                tView.setText(text+"9");
+                break;
+            case R.id.button0:
+                // your code for button2 here
+                tView.setText(text+"0");
+                break;
+            case R.id.buttonOK:
+                // your code for button2 here
+                tView.setText(text+"0");
+                break;
+            case R.id.buttonBackspace:
+                // your code for button2 here
+                if (text != null && text.length() > 0)
+                    tView.setText(text.substring(0, text.length()-1));
+                break;
+            // even more buttons here
+        }
     }
 }
