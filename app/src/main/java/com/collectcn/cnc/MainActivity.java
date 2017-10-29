@@ -1,10 +1,16 @@
 package com.collectcn.cnc;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Display;
@@ -15,6 +21,16 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Locale;
+
+import jxl.Workbook;
+import jxl.WorkbookSettings;
+import jxl.write.Label;
+import jxl.write.WritableSheet;
+import jxl.write.WritableWorkbook;
+
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -24,13 +40,31 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        // Here, thisActivity is the current activity
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // Should we show an explanation?
+
+                // No explanation needed, we can request the permission.
+
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+
+                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
+
+        }
+
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
         int width = size.x;
         int height = size.y;
 
-        TextView tView = (TextView)findViewById(R.id.tView);
+        final TextView tView = (TextView)findViewById(R.id.tView);
         Button btn1 = (Button)findViewById(R.id.button1);
         Button btn2 = (Button)findViewById(R.id.button2);
         Button btn3 = (Button)findViewById(R.id.button3);
@@ -84,6 +118,25 @@ public class MainActivity extends AppCompatActivity {
         btn0.setTextSize(width/30);
         btnOK.setTextSize(width/30);
         btnB.setTextSize(width/30);
+
+
+        final DBHelper dbHelper = new DBHelper(this);
+        //dbHelper.insertData();
+
+        //final Cursor cursor = dbHelper.getuser();
+
+
+        btnOK.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // Code here executes on main thread after user presses button
+                dbHelper.insertData(tView.getText().toString());
+                Context context = getApplicationContext();
+                Toast.makeText(context, tView.getText().toString(), Toast.LENGTH_SHORT).show();
+                tView.setText("");
+            }
+        });
+
+
     }
 
     @Override
@@ -101,7 +154,10 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.Export) {
+            Context context = getApplicationContext();
+            Toast.makeText(context, "working", Toast.LENGTH_SHORT).show();
+            export();
             return true;
         }
 
@@ -158,16 +214,88 @@ public class MainActivity extends AppCompatActivity {
                 // your code for button2 here
                 tView.setText(text+"0");
                 break;
-            case R.id.buttonOK:
-                // your code for button2 here
-                tView.setText(text+"0");
-                break;
             case R.id.buttonBackspace:
                 // your code for button2 here
                 if (text != null && text.length() > 0)
                     tView.setText(text.substring(0, text.length()-1));
                 break;
             // even more buttons here
+        }
+    }
+
+    public void export()
+    {
+        final DBHelper dbHelper = new DBHelper(this);
+        final Cursor cursor = dbHelper.getuser();
+
+        File sd = Environment.getExternalStorageDirectory();
+        String csvFile = "myData.xls";
+
+        File directory = new File(sd.getAbsolutePath());
+        //create directory if not exist
+        if (!directory.isDirectory()) {
+            directory.mkdirs();
+        }
+        try {
+
+            //file path
+            File file = new File(directory, csvFile);
+            WorkbookSettings wbSettings = new WorkbookSettings();
+            wbSettings.setLocale(new Locale("en", "EN"));
+            WritableWorkbook workbook;
+            workbook = Workbook.createWorkbook(file, wbSettings);
+            //Excel sheet name. 0 represents first sheet
+            WritableSheet sheet = workbook.createSheet("userList", 0);
+            // column and row
+            sheet.addCell(new Label(0, 0, "PhoneNumber"));
+            sheet.addCell(new Label(1, 0, "CreatedTime"));
+
+            if (cursor.moveToFirst()) {
+                do {
+                    String phone_number = cursor.getString(cursor.getColumnIndex("phone_number"));
+                    String created_time = cursor.getString(cursor.getColumnIndex("created_time"));
+
+                    int i = cursor.getPosition() + 1;
+                    sheet.addCell(new Label(0, i, phone_number));
+                    sheet.addCell(new Label(1, i, created_time));
+                } while (cursor.moveToNext());
+            }
+
+            //closing cursor
+            cursor.close();
+            workbook.write();
+            workbook.close();
+            Toast.makeText(getApplication(),
+                    "Data Exported in a Excel Sheet", Toast.LENGTH_SHORT).show();
+
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case 1: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+
+                } else {
+
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                    finish();
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request
         }
     }
 }
