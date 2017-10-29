@@ -36,10 +36,16 @@ public class DBHelper extends SQLiteOpenHelper {
         db1.close();
     }
 
-    @Override
+
+
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + table_name);
+        onCreate(db);
 
+    }
+
+    public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        onUpgrade(db, oldVersion, newVersion);
     }
 
     public Cursor getuser() {
@@ -47,5 +53,10 @@ public class DBHelper extends SQLiteOpenHelper {
         Cursor res = db.rawQuery("select * from " + table_name + " ",
                 null);
         return res;
+    }
+
+    public void clearTable(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("delete from "+ table_name);
     }
 }

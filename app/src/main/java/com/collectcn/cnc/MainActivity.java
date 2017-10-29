@@ -23,6 +23,9 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
 import jxl.Workbook;
@@ -129,10 +132,22 @@ public class MainActivity extends AppCompatActivity {
         btnOK.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // Code here executes on main thread after user presses button
-                dbHelper.insertData(tView.getText().toString());
                 Context context = getApplicationContext();
-                Toast.makeText(context, tView.getText().toString(), Toast.LENGTH_SHORT).show();
-                tView.setText("");
+
+                String text = tView.getText().toString();
+                if(text.length()==11) {
+                    try {
+                        dbHelper.insertData(text);
+                        tView.setText("");
+                        Toast.makeText(context, "Success", Toast.LENGTH_SHORT).show();
+                    }catch (Exception e){
+                        Toast.makeText(context, "Database Error", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                else {
+                    Toast.makeText(context, "Invalid Number", Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
 
@@ -154,10 +169,15 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.Export) {
-            Context context = getApplicationContext();
-            Toast.makeText(context, "working", Toast.LENGTH_SHORT).show();
+        if (id == R.id.Export){
             export();
+            return true;
+        }
+        if (id == R.id.Clear) {
+            DBHelper dbHelper = new DBHelper(this);
+            dbHelper.clearTable();
+            Context context = getApplicationContext();
+            Toast.makeText(context, "All Data Cleared", Toast.LENGTH_SHORT).show();
             return true;
         }
 
@@ -229,7 +249,16 @@ public class MainActivity extends AppCompatActivity {
         final Cursor cursor = dbHelper.getuser();
 
         File sd = Environment.getExternalStorageDirectory();
-        String csvFile = "myData.xls";
+
+        Calendar now = Calendar.getInstance();
+        int year = now.get(Calendar.YEAR);
+        int month = now.get(Calendar.MONTH) + 1; // Note: zero based!
+        int day = now.get(Calendar.DAY_OF_MONTH);
+        int hour = now.get(Calendar.HOUR_OF_DAY);
+        int minute = now.get(Calendar.MINUTE);
+        int second = now.get(Calendar.SECOND);
+
+        String csvFile = year+"-"+month+"-"+day+"_"+hour+"-"+minute+"-"+second+".xls";
 
         File directory = new File(sd.getAbsolutePath());
         //create directory if not exist
@@ -266,7 +295,7 @@ public class MainActivity extends AppCompatActivity {
             workbook.write();
             workbook.close();
             Toast.makeText(getApplication(),
-                    "Data Exported in a Excel Sheet", Toast.LENGTH_SHORT).show();
+                    "Data Exported in Root Folder", Toast.LENGTH_LONG).show();
 
         } catch(Exception e){
             e.printStackTrace();
